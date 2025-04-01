@@ -87,7 +87,7 @@ const CircularNavigation = () => {
 						cy="200"
 						r="80"
 						fill="none"
-						stroke="#000"
+						stroke="white"
 						strokeWidth="1.5"
 					/>
 
@@ -107,8 +107,8 @@ const CircularNavigation = () => {
 								fontWeight="bold"
 								className={
 									activeSection === section.name
-										? 'fill-black'
-										: 'fill-black opacity-70'
+										? 'fill-white'
+										: 'fill-white opacity-70'
 								}
 							>
 								{section.name}
@@ -117,7 +117,7 @@ const CircularNavigation = () => {
 					))}
 
 					{/* Animated dot */}
-					<circle cx={dotPosition.x} cy={dotPosition.y} r="4" fill="#000" />
+					<circle cx={dotPosition.x} cy={dotPosition.y} r="4" fill="white" />
 				</svg>
 			</div>
 		</div>

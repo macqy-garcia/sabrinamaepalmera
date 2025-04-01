@@ -3,19 +3,18 @@ import React, { useState, useEffect, useRef } from 'react';
 const CircularNavigation = () => {
 	const [activeSection, setActiveSection] = useState('INDEX');
 	const [isAnimating, setIsAnimating] = useState(false);
-	const [dotPosition, setDotPosition] = useState({ x: 200, y: 80 }); // Default to INDEX position
-	const prevAngleRef = useRef(270); // Start at INDEX angle
+	const [dotPosition, setDotPosition] = useState({ x: 200, y: 140 }); // Default to INDEX position
 
 	const sections = [
-		{ name: 'INDEX', angle: 270, x: 200, y: 40 },
-		{ name: 'JOURNEY', angle: 180, x: 30, y: 200 },
-		{ name: 'ABOUT', angle: 0, x: 370, y: 200 },
-		{ name: 'CONTACT', angle: 90, x: 200, y: 360 },
+		{ name: 'INDEX', angle: 270, x: 200, y: 100 },
+		{ name: 'WORK', angle: 180, x: 85, y: 200 },
+		{ name: 'ABOUT', angle: 0, x: 320, y: 200 },
+		{ name: 'CONTACT', angle: 90, x: 200, y: 311 },
 	];
 
 	// Calculate position on circle based on angle
 	const getPositionFromAngle = (angle) => {
-		const radius = 100; // Radius for the dot (inside the main circle)
+		const radius = 60; // Smaller radius for the dot path
 		const centerX = 200;
 		const centerY = 200;
 		const angleInRadians = (angle * Math.PI) / 180;
@@ -35,8 +34,6 @@ const CircularNavigation = () => {
 		animateDotAlongCircle(currentSection.angle, targetSection.angle);
 		setActiveSection(section);
 
-		// Here you would add navigation logic, like:
-		// navigate(`/${section.toLowerCase()}`);
 		console.log(`Navigating to ${section}`);
 	};
 
@@ -50,7 +47,7 @@ const CircularNavigation = () => {
 		if (angleDistance > 180) angleDistance -= 360;
 		if (angleDistance < -180) angleDistance += 360;
 
-		const duration = 1000; // 1 second for animation
+		const duration = 800; // 0.8 seconds for animation
 		const startTime = Date.now();
 
 		const animate = () => {
@@ -81,55 +78,48 @@ const CircularNavigation = () => {
 	}, []);
 
 	return (
-		<div className="relative w-full h-full flex items-center justify-center">
-			<svg viewBox="0 0 400 400" className="w-full max-w-lg">
-				{/* Main circle */}
-				<circle
-					cx="200"
-					cy="200"
-					r="120"
-					fill="none"
-					stroke="#000"
-					strokeWidth="2"
-				/>
+		<div className="fixed bottom-8 right-8 z-50">
+			<div className="w-64 h-64">
+				<svg viewBox="0 0 400 400" className="w-full h-full">
+					{/* Main circle */}
+					<circle
+						cx="200"
+						cy="200"
+						r="80"
+						fill="none"
+						stroke="#000"
+						strokeWidth="1.5"
+					/>
 
-				{/* Navigation labels */}
-				{sections.map((section) => (
-					<g
-						key={section.name}
-						onClick={() => handleNavClick(section.name)}
-						className="cursor-pointer"
-					>
-						<text
-							x={section.x}
-							y={section.y}
-							textAnchor="middle"
-							fontFamily="Arial"
-							fontSize="16"
-							fontWeight="bold"
-							className={
-								activeSection === section.name ? 'fill-blue-600' : 'fill-black'
-							}
+					{/* Navigation labels - smaller text */}
+					{sections.map((section) => (
+						<g
+							key={section.name}
+							onClick={() => handleNavClick(section.name)}
+							className="cursor-pointer"
 						>
-							{section.name}
-						</text>
-					</g>
-				))}
+							<text
+								x={section.x}
+								y={section.y}
+								textAnchor="middle"
+								fontFamily="Arial"
+								fontSize="14"
+								fontWeight="bold"
+								className={
+									activeSection === section.name
+										? 'fill-black'
+										: 'fill-black opacity-70'
+								}
+							>
+								{section.name}
+							</text>
+						</g>
+					))}
 
-				{/* Path for visual reference (optional, can be removed) */}
-				<circle
-					cx="200"
-					cy="200"
-					r="90"
-					fill="none"
-					stroke="#f0f0f0"
-					strokeWidth="1"
-					strokeDasharray="2,2"
-				/>
-
-				{/* Animated dot */}
-				<circle cx={dotPosition.x} cy={dotPosition.y} r="5" fill="#000" />
-			</svg>
+					{/* Animated dot */}
+					<circle cx={dotPosition.x} cy={dotPosition.y} r="4" fill="#000" />
+				</svg>
+			</div>
 		</div>
 	);
 };

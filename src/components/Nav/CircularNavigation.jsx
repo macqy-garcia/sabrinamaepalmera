@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigation } from '../../context/NavigationContext';
 
 const CircularNavigation = () => {
-	const [activeSection, setActiveSection] = useState('INDEX');
+	const { activeSection, setActiveSection } = useNavigation();
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [dotPosition, setDotPosition] = useState({ x: 200, y: 140 }); // Default to INDEX position
 
 	const sections = [
 		{ name: 'INDEX', angle: 270, x: 200, y: 100 },
-		{ name: 'WORK', angle: 180, x: 85, y: 200 },
+		{ name: 'JOURNEY', angle: 180, x: 85, y: 200 },
 		{ name: 'ABOUT', angle: 0, x: 320, y: 200 },
 		{ name: 'CONTACT', angle: 90, x: 200, y: 311 },
 	];

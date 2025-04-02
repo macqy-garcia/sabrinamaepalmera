@@ -1,11 +1,15 @@
 import React from 'react';
 import { Mail, X, Facebook, Instagram, Phone } from 'lucide-react';
+import { useNavigation } from '../context/NavigationContext';
 
 export default function ContactCard() {
+	const { setActiveSection } = useNavigation();
 	return (
-		<section className="absolute bottom-60 right-10 h-72 w-60 rounded-lg p-5 bg-neutral-50 shadow-md">
+		<section className="h-72 w-60 rounded-lg p-5 bg-neutral-50 shadow-md relative mx-auto mt-64">
 			{/* Close button */}
-			<button className="absolute top-2 right-2 text-neutral-500">
+			<button 
+				onClick={() => setActiveSection('INDEX')}
+				className="absolute top-2 right-2 text-neutral-500 hover:text-neutral-800 transition-colors">
 				<X size={16} />
 			</button>
 

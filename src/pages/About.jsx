@@ -1,6 +1,17 @@
+import { X } from 'lucide-react';
+import { useNavigation } from '../context/NavigationContext';
+
 export default function About() {
+	const { setActiveSection } = useNavigation();
 	return (
-		<section className="absolute bottom-60 right-14 h-64 w-56 rounded-lg p-5 bg-neutral-50 shadow-md">
+		<section className="h-64 w-56 rounded-lg p-5 bg-neutral-50 shadow-md relative mx-auto mt-64">
+			{/* Close button */}
+			<button 
+				onClick={() => setActiveSection('INDEX')} 
+				className="absolute top-2 right-2 text-neutral-500 hover:text-neutral-800 transition-colors"
+			>
+				<X size={16} />
+			</button>
 			{/* Image Container - positioned to be half in, half out of the card */}
 			<div className="absolute -top-10 left-1/2 transform -translate-x-1/2">
 				<div className="rounded-full h-20 w-20 overflow-hidden ring-2 ring-neutral-500 border-2 border-white shadow-lg">

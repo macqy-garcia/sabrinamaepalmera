@@ -10,8 +10,8 @@ export default function App() {
 	return (
 		<NavigationProvider>
 			<main className="relative h-screen w-screen overflow-hidden">
-				<CircularNavigation />
 				<StarryBackground />
+				<CircularNavigation />
 				<PageController />
 			</main>
 		</NavigationProvider>
@@ -26,14 +26,14 @@ function PageController() {
 	const pageVariants = {
 		initial: { y: 100, opacity: 0 },
 		animate: { y: 0, opacity: 1, transition: { duration: 0.5 } },
-		exit: { y: 100, opacity: 0, transition: { duration: 0.3 } }
+		exit: { y: 100, opacity: 0, transition: { duration: 0.3 } },
 	};
 
 	return (
 		<div className="absolute inset-0 pointer-events-none">
 			<AnimatePresence mode="wait">
 				{activeSection === 'JOURNEY' && (
-					<motion.div 
+					<motion.div
 						key="journey"
 						className="pointer-events-auto absolute inset-0 z-20"
 						initial="initial"
@@ -46,7 +46,7 @@ function PageController() {
 				)}
 
 				{activeSection === 'ABOUT' && (
-					<motion.div 
+					<motion.div
 						key="about"
 						className="pointer-events-auto"
 						initial="initial"
@@ -59,7 +59,7 @@ function PageController() {
 				)}
 
 				{activeSection === 'CONTACT' && (
-					<motion.div 
+					<motion.div
 						key="contact"
 						className="pointer-events-auto"
 						initial="initial"

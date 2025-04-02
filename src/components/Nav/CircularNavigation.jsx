@@ -8,7 +8,7 @@ const CircularNavigation = () => {
 
 	const sections = [
 		{ name: 'INDEX', angle: 270, x: 200, y: 100 },
-		{ name: 'JOURNEY', angle: 180, x: 85, y: 200 },
+		{ name: 'JOURNEY', angle: 180, x: 65, y: 200 },
 		{ name: 'ABOUT', angle: 0, x: 320, y: 200 },
 		{ name: 'CONTACT', angle: 90, x: 200, y: 311 },
 	];

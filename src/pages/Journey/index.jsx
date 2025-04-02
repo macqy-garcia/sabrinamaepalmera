@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigation } from '../../context/NavigationContext';
 
 // Timeline data
@@ -45,222 +45,155 @@ const timelineData = [
 
 const Journey = () => {
 	const { setActiveSection } = useNavigation();
-	const containerRef = useRef(null);
+	const scrollContainerRef = useRef(null);
 
-	// Set up scroll-based animations
-	const { scrollYProgress } = useScroll({
-		target: containerRef,
-		offset: ['start start', 'end end'],
-	});
+	// Effect to enable smooth horizontal scrolling with mouse wheel
+	useEffect(() => {
+		const container = scrollContainerRef.current;
+		if (!container) return;
+
+		const handleWheel = (e) => {
+			if (e.deltaY !== 0) {
+				e.preventDefault();
+				container.scrollLeft += e.deltaY;
+			}
+		};
+
+		container.addEventListener('wheel', handleWheel, { passive: false });
+
+		return () => {
+			container.removeEventListener('wheel', handleWheel);
+		};
+	}, []);
+
+	// Navigate to next/previous section
+	const navigate = (direction) => {
+		const container = scrollContainerRef.current;
+		if (!container) return;
+
+		const cardWidth = container.querySelector('.year-card').offsetWidth;
+		const scrollAmount = direction === 'next' ? cardWidth : -cardWidth;
+
+		container.scrollBy({
+			left: scrollAmount,
+			behavior: 'smooth',
+		});
+	};
 
 	return (
-		<div ref={containerRef} className="relative w-full h-full overflow-auto">
-			{/* Background with split design */}
-			<div className="fixed inset-0 z-0">
-				{/* Left side - vintage map background */}
-				<div className="absolute left-0 top-0 w-1/2 h-full bg-gray-200 opacity-90">
-					<div className="absolute inset-0 opacity-30 bg-[#f5f5f5] bg-opacity-30"></div>
+		<div className="relative w-full h-full bg-gray-100 text-gray-900 flex flex-col overflow-hidden">
+			{/* Header */}
+			<div className="py-8 px-16 flex items-center justify-between">
+				<div>
+					<h1 className="text-base font-mono uppercase tracking-wide">
+						MY JOURNEY
+					</h1>
+					<h2 className="text-sm text-gray-500">FROM CHILDHOOD TO NURSING</h2>
 				</div>
 
-				{/* Right side - space background */}
-				<div className="absolute right-0 top-0 w-1/2 h-full bg-gray-900">
-					<div className="absolute inset-0 opacity-50">
-						{/* Stars */}
-						{[...Array(50)].map((_, i) => (
-							<div
-								key={i}
-								className="absolute rounded-full bg-white"
-								style={{
-									top: `${Math.random() * 100}%`,
-									left: `${Math.random() * 100}%`,
-									width: `${Math.random() * 2 + 1}px`,
-									height: `${Math.random() * 2 + 1}px`,
-									opacity: Math.random() * 0.7 + 0.3,
-								}}
-							/>
-						))}
-					</div>
-				</div>
-
-				{/* Center divider with ink splatter effect */}
-				<div className="absolute left-1/2 h-full w-10 -ml-5 bg-black opacity-10 transform -skew-x-3"></div>
+				<button
+					onClick={() => setActiveSection('INDEX')}
+					className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+				>
+					<X size={20} />
+				</button>
 			</div>
 
-			{/* Decorative elements */}
-			<div className="fixed top-10 right-20 w-28 h-28 opacity-20 z-0">
-				<svg viewBox="0 0 100 100">
-					<circle
-						cx="50"
-						cy="50"
-						r="45"
-						fill="none"
-						stroke="#8B4513"
-						strokeWidth="0.5"
-					/>
-					<circle
-						cx="50"
-						cy="50"
-						r="40"
-						fill="none"
-						stroke="#8B4513"
-						strokeWidth="0.5"
-					/>
-					<path
-						d="M50,5 L50,95 M5,50 L95,50 M15,15 L85,85 M15,85 L85,15"
-						stroke="#8B4513"
-						strokeWidth="0.5"
-					/>
-				</svg>
-			</div>
-
-			<div className="fixed bottom-20 left-20 w-24 h-24 opacity-20 z-0">
-				<svg viewBox="0 0 100 100">
-					<path
-						d="M30,80 C35,75 40,70 50,70 C60,70 65,75 70,80 C60,85 40,85 30,80 Z"
-						fill="#8B4513"
-					/>
-					<path
-						d="M50,20 L50,70 M50,20 L70,40 L50,40 M50,30 L65,45 L50,45"
-						stroke="#8B4513"
-						strokeWidth="1"
-						fill="none"
-					/>
-				</svg>
-			</div>
-
-			{/* Close button */}
-			<button
-				onClick={() => setActiveSection('INDEX')}
-				className="fixed top-5 right-5 z-50 text-neutral-800 hover:text-neutral-500 transition-colors bg-white bg-opacity-50 rounded-full p-1"
+			{/* Timeline content */}
+			<div
+				ref={scrollContainerRef}
+				className="flex-1 flex overflow-x-auto overflow-y-hidden px-14 pb-12 gap-6"
+				style={{
+					scrollbarWidth: 'none',
+					msOverflowStyle: 'none',
+				}}
 			>
-				<X size={24} />
-			</button>
-
-			{/* Timeline */}
-			<div className="relative z-10 min-h-full pb-32">
-				{/* Initial title */}
-				<div className="min-h-screen flex flex-col justify-center items-center">
-					<motion.h1
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.8 }}
-						className="text-5xl font-bold mb-4 text-center"
-					>
-						My Journey
-					</motion.h1>
-					<motion.p
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.8, delay: 0.3 }}
-						className="text-lg text-center max-w-lg mx-auto mb-12"
-					>
-						Scroll down to explore the moments that shaped me
-					</motion.p>
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: [0, 1, 0] }}
-						transition={{ duration: 2, repeat: Infinity }}
-						className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center pt-1"
-					>
-						<div className="w-1 h-2 bg-gray-600 rounded-full"></div>
-					</motion.div>
-				</div>
-
-				{/* Timeline connector */}
-				<div className="absolute left-1/2 top-screen bottom-0 w-0.5 bg-gray-400 z-10 transform -translate-x-1/2 mt-screen"></div>
+				<style jsx global>{`
+					/* Hide scrollbar for Chrome, Safari and Opera */
+					#journey-scroll::-webkit-scrollbar {
+						display: none;
+					}
+				`}</style>
 
 				{timelineData.map((item, index) => (
 					<motion.div
 						key={item.year}
-						initial={{ opacity: 0 }}
-						whileInView={{ opacity: 1 }}
-						viewport={{ once: false, amount: 0.8 }}
-						transition={{ duration: 0.6 }}
-						className={`flex items-center min-h-screen relative ${
-							index % 2 === 0 ? 'justify-end' : 'justify-start'
-						}`}
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5, delay: index * 0.1 }}
+						className="year-card flex-shrink-0 w-[28%] min-w-[280px] flex flex-col bg-white rounded-lg overflow-hidden shadow-sm"
 					>
-						{/* Year marker on timeline */}
-						<div className="absolute left-1/2 -ml-3 w-6 h-6 rounded-full bg-white border-2 border-gray-800 z-20 flex items-center justify-center">
-							<div className="w-2 h-2 rounded-full bg-gray-800"></div>
+						{/* Image */}
+						<div className="relative w-full aspect-[4/5] overflow-hidden">
+							<img
+								src={item.image}
+								alt={`Year ${item.year}`}
+								className="w-full h-full object-cover object-center"
+							/>
 						</div>
 
-						{/* Year label */}
-						<div
-							className={`absolute left-1/2 ${
-								index % 2 === 0 ? '-ml-24' : 'ml-10'
-							} -mt-12`}
-						>
-							<span className="text-4xl font-bold">{item.year}</span>
-						</div>
-
-						{/* Content card */}
-						<div
-							className={`w-5/12 p-6 mx-4 ${
-								index % 2 === 0 ? 'mr-10' : 'ml-10'
-							} backdrop-blur-sm rounded-lg shadow-md ${
-								index % 2 === 0
-									? 'bg-white bg-opacity-80'
-									: 'bg-gray-800 bg-opacity-80 text-white'
-							}`}
-						>
-							<div className="relative mb-4 h-[800px] overflow-hidden rounded border-2 border-opacity-30 border-gray-400">
-								<img
-									src={item.image}
-									alt={`Year ${item.year}`}
-									className="w-full h-full object-cover object-center transform hover:scale-110 transition-transform duration-500"
-								/>
-								<div
-									className={`absolute inset-0 bg-gradient-to-t ${
-										index % 2 === 0 ? 'from-white' : 'from-gray-900'
-									} to-transparent opacity-30`}
-								></div>
+						{/* Content */}
+						<div className="p-6 flex-1 flex flex-col">
+							<div className="mb-2 flex justify-between items-start">
+								<div>
+									<h3 className="text-lg font-semibold">{item.year}</h3>
+								</div>
+								<div className="text-xs text-gray-400 py-1 px-3 rounded-full bg-gray-100">
+									{index === 0
+										? 'CHILDHOOD'
+										: index === 1
+										? 'ELEMENTARY'
+										: index === 2
+										? 'HIGH SCHOOL'
+										: index === 3
+										? 'TURNING 18'
+										: index === 4
+										? 'COLLEGE'
+										: 'CAPPING'}
+								</div>
 							</div>
-							<p className="text-xs leading-tight tracking-wide">
+
+							<p className="text-xs leading-relaxed text-gray-600 line-clamp-5">
 								{item.description}
 							</p>
-
-							{/* Decorative elements */}
-							<div
-								className={`absolute ${
-									index % 2 === 0 ? '-right-2' : '-left-2'
-								} -top-2 w-8 h-8 border-t border-r border-gray-600 opacity-30`}
-							></div>
-							<div
-								className={`absolute ${
-									index % 2 === 0 ? '-left-2' : '-right-2'
-								} -bottom-2 w-8 h-8 border-b border-l border-gray-600 opacity-30`}
-							></div>
-
-							{/* Small zodiac-like element */}
-							<div className="absolute bottom-3 right-3 w-12 h-12 opacity-20">
-								<svg viewBox="0 0 24 24">
-									<circle
-										cx="12"
-										cy="12"
-										r="10"
-										fill="none"
-										stroke="currentColor"
-										strokeWidth="0.5"
-									/>
-									<path
-										d="M12,2 L12,22 M2,12 L22,12"
-										stroke="currentColor"
-										strokeWidth="0.5"
-									/>
-									<circle
-										cx="12"
-										cy="12"
-										r="4"
-										fill="none"
-										stroke="currentColor"
-										strokeWidth="0.5"
-									/>
-								</svg>
-							</div>
 						</div>
 					</motion.div>
 				))}
+			</div>
+
+			{/* Navigation Controls */}
+			<div className="absolute bottom-6 left-16 flex items-center gap-2">
+				<button
+					onClick={() => navigate('prev')}
+					className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-200 transition-colors"
+				>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="2"
+					>
+						<path d="M15 18l-6-6 6-6" />
+					</svg>
+				</button>
+
+				<button
+					onClick={() => navigate('next')}
+					className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-200 transition-colors"
+				>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="2"
+					>
+						<path d="M9 18l6-6-6-6" />
+					</svg>
+				</button>
 			</div>
 		</div>
 	);
